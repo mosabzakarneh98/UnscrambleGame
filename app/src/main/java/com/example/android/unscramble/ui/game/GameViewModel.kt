@@ -1,11 +1,7 @@
 package com.example.android.unscramble.ui.game
 
-
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlin.random.Random
-
 
 class GameViewModel:ViewModel() {
 
@@ -15,79 +11,62 @@ class GameViewModel:ViewModel() {
 
     val wordNumber=MutableLiveData(0)
     var count=0
-    var inc=0
 
     val listOfWord= mutableListOf<String>()
+
     init {
-        init()
+        createRandomWordsList()
+        nextWord()
     }
 
-    fun init()
-    {
-        randomList()
-        currentWord=listOfWord.get(count++)
-        Log.d("mosab",currentWord)
-        wordNumber.value=count
-        currentScrambledWord.value=randomWord(currentWord)
-        Log.d("mosab",currentScrambledWord.value.toString())
-    }
-
-    fun randomList ()
-    {
-        for (i in 1..10)
-        {
-          randomWord()
+    fun createRandomWordsList() {
+        for (i in 1..MAX_NO_OF_WORDS){
+         getRandomWord()
         }
     }
 
-    fun randomWord()
-    {
+    fun getRandomWord() {
         var str=allWordsList.random()
-        while(str !in listOfWord)listOfWord.add(str)
-
+        if(str !in listOfWord)listOfWord.add(str)
+        else getRandomWord()
     }
 
-    fun nextWord():Boolean
-    {
-        if(count==10)return false
-
-
-             currentWord=listOfWord[count++]
-             wordNumber.value=count
-             currentScrambledWord.value=randomWord(currentWord)
-
-       return true
+    fun nextWord() {
+        currentWord=listOfWord[count++]
+        wordNumber.value=count
+        currentScrambledWord.value=shuffleCharactersOfAWord(currentWord)
     }
 
-    fun score()
-    {
-
-        inc+=SCORE_INCREASE
-        score.value=inc
+    fun increaseScore() {
+        score.value=score.value?.plus(SCORE_INCREASE)
     }
-    fun reInit()
-    {
+
+    fun isCorrectWord(word:String) = word==currentWord
+
+    fun reInit() {
         score.value=0
         wordNumber.value=1
         count=0
         listOfWord.clear()
-        init()
+        createRandomWordsList()
+        nextWord()
     }
-    fun randomWord(word:String):String
-    {
-        var temp =mutableListOf<Int>()
+
+    fun shuffleCharactersOfAWord(word:String):String {
+        var tempList =mutableListOf<Int>()
         var tempWord=""
-        var tempInt=(0..(word.length-1)).random()
-        while(temp.size<word.length)
+        var tempInt:Int
+        while(tempList.size<word.length)
         {
             tempInt=(0..(word.length-1)).random()
-            if(tempInt !in temp) {
-                temp.add(tempInt)
+            if(tempInt !in tempList) {
+                tempList.add(tempInt)
                 tempWord+=word.get(tempInt)
             }
         }
 
         return tempWord
     }
+
 
 }
