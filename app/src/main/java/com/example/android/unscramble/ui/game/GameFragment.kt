@@ -36,7 +36,7 @@ class GameFragment : Fragment() {
         binding.skip.setOnClickListener { onSkipWord() }
 
         viewModel.score.observe(viewLifecycleOwner,{
-            Toast.makeText(requireContext(),"correct answer",Toast.LENGTH_SHORT).show()
+          if(it!=0)  Toast.makeText(requireContext(),"correct answer",Toast.LENGTH_SHORT).show()
         })
 
     }
