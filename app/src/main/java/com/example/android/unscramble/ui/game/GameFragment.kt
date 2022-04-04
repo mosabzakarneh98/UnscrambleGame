@@ -56,9 +56,10 @@ class GameFragment : Fragment() {
             onSkipWord()
         }
 
-        viewModel.scoreSingleLiveEvent.observe(viewLifecycleOwner, {
+        viewModel.flagSingleLiveEvent.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), "correct answer", Toast.LENGTH_SHORT).show()
-        })
+        }
+
     }
 
     private fun onSubmitWord() {
@@ -94,7 +95,7 @@ class GameFragment : Fragment() {
     private fun showFinalScoreDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.congratulations))
-            .setMessage(getString(R.string.you_scored, viewModel.scoreSingleLiveEvent.value))
+            .setMessage(getString(R.string.you_scored, viewModel.scoreLiveData.value))
             .setCancelable(false)
             .setNegativeButton(getString(R.string.exit)) { _, _ ->
                 exitGame()

@@ -4,22 +4,45 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
+/*open class Event<out T>(private val content: T) {
+
+    var hasBeenHandled = false
+        private set // Allow external read but not write
+
+    /**
+     * Returns the content and prevents its use again.
+     */
+    fun getContentIfNotHandled(): T? {
+        return if (hasBeenHandled) {
+            null
+        } else {
+            hasBeenHandled = true
+            content
+        }
+    }
+
+    /**
+     * Returns the content, even if it's already been handled.
+     */
+    fun peekContent(): T = content
+}*/
+
 
 class GameViewModel : ViewModel() {
 
-    private val _score = SingleLiveEvent(0)
-    val scoreSingleLiveEvent: LiveData<Int>
-        get() = _score
+    private val _scoreLiveData = MutableLiveData(0)
+    val scoreLiveData: LiveData<Int> = _scoreLiveData
 
-    private val _currentScrambledWord = MutableLiveData("")
-    val currentScrambledWordLiveData: LiveData<String>
-        get() = _currentScrambledWord
+    private val _currentScrambledWordLiveData = MutableLiveData("")
+    val currentScrambledWordLiveData: LiveData<String> = _currentScrambledWordLiveData
 
-    private val _wordNumber = MutableLiveData(0)
-    val wordNumberLiveData: LiveData<Int>
-        get() = _wordNumber
+    private val _wordNumberLiveData = MutableLiveData(0)
+    val wordNumberLiveData: LiveData<Int> = _wordNumberLiveData
 
     private lateinit var currentWord: String
+
+    private val _flagSingleLiveEvent = SingleLiveEvent(false)
+    val flagSingleLiveEvent: LiveData<Boolean> = _flagSingleLiveEvent
 
     private var _count = 0
     var count: Int
@@ -37,19 +60,20 @@ class GameViewModel : ViewModel() {
 
     fun nextWord() {
         currentWord = listOfWord[count++]
-        _wordNumber.value = count
-        _currentScrambledWord.value = shuffleCharactersOfAWord(currentWord)
+        _wordNumberLiveData.value = count
+        _currentScrambledWordLiveData.value = shuffleCharactersOfAWord(currentWord)
     }
 
     fun increaseScore() {
-        _score.value = scoreSingleLiveEvent.value?.plus(SCORE_INCREASE)
+        _scoreLiveData.value = _scoreLiveData.value?.plus(SCORE_INCREASE)
+        _flagSingleLiveEvent.value=true
     }
 
     fun isCorrectWord(word: String) = word == currentWord
 
     fun reInit() {
-        _score.value = 0
-        _wordNumber.value = 1
+        _scoreLiveData.value = 0
+        _wordNumberLiveData.value = 1
         count = 0
         listOfWord.clear()
         createRandomWordsList()
