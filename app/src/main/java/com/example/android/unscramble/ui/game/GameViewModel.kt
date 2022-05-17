@@ -66,10 +66,16 @@ class GameViewModel : ViewModel() {
 
     fun increaseScore() {
         _scoreLiveData.value = _scoreLiveData.value?.plus(SCORE_INCREASE)
-        _flagSingleLiveEvent.value=true
+        _flagSingleLiveEvent.value = true
     }
 
-    fun isCorrectWord(word: String) = word == currentWord
+    fun isCorrectWord(word: String): Boolean {
+        if (word == currentWord) {
+            increaseScore()
+            return true
+        }
+        return false
+    }
 
     fun reInit() {
         _scoreLiveData.value = 0

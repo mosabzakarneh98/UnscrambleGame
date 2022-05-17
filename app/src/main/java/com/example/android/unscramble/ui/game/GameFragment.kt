@@ -65,14 +65,15 @@ class GameFragment : Fragment() {
     private fun onSubmitWord() {
         if (viewModel.count != MAX_NO_OF_WORDS) {
             if (viewModel.isCorrectWord(binding.textInputEditText.text.toString())) {
+
                 viewModel.nextWord()
 
-                viewModel.increaseScore()
-
                 setErrorTextField(false)
-            } else setErrorTextField(true)
 
-        } else showFinalScoreDialog()
+            } else setErrorTextField(true)
+        } else {
+            showFinalScoreDialog()
+        }
     }
 
     private fun onSkipWord() {
