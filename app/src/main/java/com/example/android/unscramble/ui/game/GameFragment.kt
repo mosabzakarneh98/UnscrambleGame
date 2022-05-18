@@ -110,6 +110,8 @@ class GameFragment : Fragment() {
     private fun exitGame() {
         activity?.finish()
     }
+    
+    //welcome
 
     private fun setErrorTextField(error: Boolean) {
         if (error) {
