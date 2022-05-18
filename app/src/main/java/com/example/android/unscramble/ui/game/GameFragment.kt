@@ -37,7 +37,7 @@ class GameFragment : Fragment() {
         )
         return binding.root
     }
-    //mosab zak
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -110,8 +110,6 @@ class GameFragment : Fragment() {
     private fun exitGame() {
         activity?.finish()
     }
-    
-    //welcome mosab mohammad
 
     private fun setErrorTextField(error: Boolean) {
         if (error) {
