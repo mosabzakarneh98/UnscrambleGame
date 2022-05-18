@@ -78,13 +78,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/word_count"
-            tools:text="@{gameViewModel.currentScrambledWord}" />
+            textWithSpaceBetweenItsCharacters="@{gameViewModel.currentScrambledWordLiveData}"
+            />
 
         <TextView
             android:id="@+id/word_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{@string/word_count(gameViewModel.wordNumber,10)}"
+            android:text="@{@string/word_count(gameViewModel.wordNumberLiveData,10)}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             app:layout_constraintBottom_toTopOf="@+id/textView_unscrambled_word"
             app:layout_constraintStart_toStartOf="parent"
@@ -95,7 +96,7 @@
             android:id="@+id/score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{@string/score(gameViewModel.score)}"
+            android:text="@{@string/score(gameViewModel.scoreLiveData)}"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             app:layout_constraintEnd_toEndOf="parent"

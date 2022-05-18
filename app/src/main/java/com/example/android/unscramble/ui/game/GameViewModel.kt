@@ -1,93 +1,115 @@
 package com.example.android.unscramble.ui.game
 
-
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlin.random.Random
 
+/*open class Event<out T>(private val content: T) {
 
-class GameViewModel:ViewModel() {
+    var hasBeenHandled = false
+        private set // Allow external read but not write
 
-    val score=MutableLiveData(0)
-    val currentScrambledWord=MutableLiveData("")
-    lateinit var currentWord:String
-
-    val wordNumber=MutableLiveData(0)
-    var count=0
-    var inc=0
-
-    val listOfWord= mutableListOf<String>()
-    init {
-        init()
-    }
-
-    fun init()
-    {
-        randomList()
-        currentWord=listOfWord.get(count++)
-        Log.d("mosab",currentWord)
-        wordNumber.value=count
-        currentScrambledWord.value=randomWord(currentWord)
-        Log.d("mosab",currentScrambledWord.value.toString())
-    }
-
-    fun randomList ()
-    {
-        for (i in 1..10)
-        {
-          randomWord()
+    /**
+     * Returns the content and prevents its use again.
+     */
+    fun getContentIfNotHandled(): T? {
+        return if (hasBeenHandled) {
+            null
+        } else {
+            hasBeenHandled = true
+            content
         }
     }
 
-    fun randomWord()
-    {
-        var str=allWordsList.random()
-        while(str !in listOfWord)listOfWord.add(str)
+    /**
+     * Returns the content, even if it's already been handled.
+     */
+    fun peekContent(): T = content
+}*/
 
+
+class GameViewModel : ViewModel() {
+
+    private val _scoreLiveData = MutableLiveData(0)
+    val scoreLiveData: LiveData<Int> = _scoreLiveData
+
+    private val _currentScrambledWordLiveData = MutableLiveData("")
+    val currentScrambledWordLiveData: LiveData<String> = _currentScrambledWordLiveData
+
+    private val _wordNumberLiveData = MutableLiveData(0)
+    val wordNumberLiveData: LiveData<Int> = _wordNumberLiveData
+
+    private lateinit var currentWord: String
+
+    private val _flagSingleLiveEvent = SingleLiveEvent(false)
+    val flagSingleLiveEvent: LiveData<Boolean> = _flagSingleLiveEvent
+
+    private var _count = 0
+    var count: Int
+        get() = _count
+        set(value) {
+            _count = value
+        }
+
+    private val listOfWord = mutableListOf<String>()
+
+    init {
+        createRandomWordsList()
+        nextWord()
     }
 
-    fun nextWord():Boolean
-    {
-        if(count==10)return false
-
-
-             currentWord=listOfWord[count++]
-             wordNumber.value=count
-             currentScrambledWord.value=randomWord(currentWord)
-
-       return true
+    fun nextWord() {
+        currentWord = listOfWord[count++]
+        _wordNumberLiveData.value = count
+        _currentScrambledWordLiveData.value = shuffleCharactersOfAWord(currentWord)
     }
 
-    fun score()
-    {
-
-        inc+=SCORE_INCREASE
-        score.value=inc
+    fun increaseScore() {
+        _scoreLiveData.value = _scoreLiveData.value?.plus(SCORE_INCREASE)
+        _flagSingleLiveEvent.value = true
     }
-    fun reInit()
-    {
-        score.value=0
-        wordNumber.value=1
-        count=0
+
+    fun isCorrectWord(word: String): Boolean {
+        if (word == currentWord) {
+            increaseScore()
+            return true
+        }
+        return false
+    }
+
+    fun reInit() {
+        _scoreLiveData.value = 0
+        _wordNumberLiveData.value = 1
+        count = 0
         listOfWord.clear()
-        init()
+        createRandomWordsList()
+        nextWord()
     }
-    fun randomWord(word:String):String
-    {
-        var temp =mutableListOf<Int>()
-        var tempWord=""
-        var tempInt=(0..(word.length-1)).random()
-        while(temp.size<word.length)
-        {
-            tempInt=(0..(word.length-1)).random()
-            if(tempInt !in temp) {
-                temp.add(tempInt)
-                tempWord+=word.get(tempInt)
+
+    private fun createRandomWordsList() {
+        for (i in 1..MAX_NO_OF_WORDS) {
+            getRandomWord()
+        }
+    }
+
+    private fun getRandomWord() {
+        val str = allWordsList.random()
+        if (str !in listOfWord) listOfWord.add(str)
+        else getRandomWord()
+    }
+
+    private fun shuffleCharactersOfAWord(word: String): String {
+        val tempList = mutableListOf<Int>()
+        var tempWord = ""
+        var tempInt: Int
+        while (tempList.size < word.length) {
+            tempInt = (word.indices).random()
+            if (tempInt !in tempList) {
+                tempList.add(tempInt)
+                tempWord += word[tempInt]
             }
         }
 
         return tempWord
     }
-
 }
