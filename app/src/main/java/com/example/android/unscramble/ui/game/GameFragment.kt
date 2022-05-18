@@ -37,7 +37,7 @@ class GameFragment : Fragment() {
         )
         return binding.root
     }
-
+    //mosab
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
