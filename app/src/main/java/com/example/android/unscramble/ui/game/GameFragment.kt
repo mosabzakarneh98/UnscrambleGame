@@ -111,7 +111,7 @@ class GameFragment : Fragment() {
         activity?.finish()
     }
     
-    //welcome
+    //welcome mosab
 
     private fun setErrorTextField(error: Boolean) {
         if (error) {
